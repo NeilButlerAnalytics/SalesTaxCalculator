@@ -32,5 +32,24 @@ namespace SalesTaxApp.Tests
             double itemTotalPrice = item.Price + itemTax;
             Assert.Equal(expectedPrice, itemTotalPrice, 2);
         }
+
+        // Same Test as above but this time three items are purposefully incorrect, these tests should FAIL
+        [Theory]
+        [InlineData("book", 12.49, false, true, 12.49)]
+        [InlineData("music CD", 14.99, false, false, 16.49)]
+        [InlineData("chocolate bar", 0.85, false, true, 0.85)]
+        [InlineData("imported box of chocolates", 10.00, true, true, 10.51)] // INCORRECT
+        [InlineData("imported bottle of perfume", 47.50, true, false, 54.68)] // INCORRECT
+        [InlineData("imported bottle of perfume", 27.99, true, false, 32.19)]
+        [InlineData("bottle of perfume", 18.99, false, false, 20.89)]
+        [InlineData("packet of headache pills", 9.75, false, true, 9.00)] // INCORRECT
+        [InlineData("imported box of chocolates", 11.25, true, true, 11.85)]
+        public void test3_CheckItemPriceMultiple(string name, double price, bool isImported, bool isExempt, double expectedPrice)
+        {
+            var item = new Item(name, price, isImported, isExempt);
+            double itemTax = ReceiptGenerator.CalculateTax(item);
+            double itemTotalPrice = item.Price + itemTax;
+            Assert.Equal(expectedPrice, itemTotalPrice, 2);
+        }
     }
 }
