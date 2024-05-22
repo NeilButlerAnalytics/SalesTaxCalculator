@@ -11,17 +11,44 @@ namespace MyReceiptApp
         static void Main(string[] args)
         {
             // Input data
-            var inputItems = new List<string>
+            var inputItems1 = new List<string>
             {
                 "1 book at 12.49",
                 "1 music CD at 14.99",
                 "1 chocolate bar at 0.85"
             };
 
-            // Parse input items and calculate receipt
-            var items = ParseInputItems(inputItems);
-            string receipt = ReceiptGenerator.Generate(items);
+            var inputItems2 = new List<string>
+            {
+                "1 Imported box of chocolates at 10.00",
+                "1 Imported bottle of perfume at 47.50",
+            };
 
+            var inputItems3 = new List<string>
+            {
+                "1 Imported bottle of perfume at 27.99",
+                "1 Bottle of perfume at 18.99",
+                "1 Packet of paracetamol at 9.75",
+                "1 Box of imported chocolates at 11.25"
+            };
+            string receipt = "";
+            // Parse input items and calculate receipt
+            if (inputItems1.Count != 0)
+            {
+                var items1 = ParseInputItems(inputItems1);
+                receipt = ReceiptGenerator.Generate(items1);
+            }
+
+            if (inputItems2.Count != 0)
+            {
+                var items2 = ParseInputItems(inputItems2);
+                receipt += "\n\n" + ReceiptGenerator.Generate(items2);
+            }
+            if (inputItems2.Count != 0)
+            {
+                var items3 = ParseInputItems(inputItems3);
+                receipt += "\n\n" + ReceiptGenerator.Generate(items3);
+            }
             // Print receipt to screen
             Console.WriteLine(receipt);
             Console.ReadLine(); // Keep the console open until user intervention
@@ -40,7 +67,7 @@ namespace MyReceiptApp
                 int quantity = int.Parse(inputItem.Substring(0, spaceIndex));
 
                 // Extract the item details substring
-                string itemDetails = inputItem.Substring(spaceIndex + 1);
+                string itemDetails = (inputItem.Substring(spaceIndex + 1)).ToLower();
 
                 // Determine if the item is imported
                 bool isImported = itemDetails.Contains("imported");
