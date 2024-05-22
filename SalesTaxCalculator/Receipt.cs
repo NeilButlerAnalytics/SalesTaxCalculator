@@ -1,4 +1,5 @@
 ﻿using SalesTaxCalculator;
+using System.Globalization;
 
 namespace SalesTaxApp
 {
@@ -32,5 +33,38 @@ namespace SalesTaxApp
             // We divide by 20 to revert back to it's correct denomination but with accurate rounding
             return Math.Ceiling(amount * 20) / 20.0;
         }
+
+        // Method that generates a receipt string based on a list of items
+        public static string Generate(List<Item> items)
+        {
+            double totalTax = 0;
+            double totalPrice = 0;
+            List<string> receiptLines = new List<string>();
+
+            foreach (var item in items)
+            {
+                // Calculate tax for the current item
+                double itemTax = CalculateTax(item);
+
+                // Calculate total price for the current item
+                double itemTotalPrice = item.Price + itemTax;
+
+                totalTax += itemTax;
+                totalPrice += itemTotalPrice;
+
+                // Add a interpolated line to the receiptlines list for the current item
+                receiptLines.Add($"{item.Name}: {itemTotalPrice.ToString("0.00", CultureInfo.InvariantCulture)}");
+            }
+
+            // Add a line to the receipt lines list showing the total sales taxes
+            receiptLines.Add($"Sales Taxes: {totalTax.ToString("F2")}");
+
+            // Add a line to the receipt lines list showing the total price for all items
+            receiptLines.Add($"Total: {totalPrice.ToString("F2")}");
+
+            // Combine all receipt lines into a single string separated by newline characters and return the result
+            return string.Join("\n", receiptLines);
+        }
+
     }
 }

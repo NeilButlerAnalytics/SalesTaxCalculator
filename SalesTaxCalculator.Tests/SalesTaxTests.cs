@@ -51,5 +51,19 @@ namespace SalesTaxApp.Tests
             double itemTotalPrice = item.Price + itemTax;
             Assert.Equal(expectedPrice, itemTotalPrice, 2);
         }
+        // Generate method created in Receipt.cs - this method creates a receipt as string based on itmes and price and total price after tax
+        // This first test is based on the first required output in the specification
+        [Fact]
+        public void test4_GenerateAReceipt()
+        {
+            var items = new List<Item>
+            {
+                new Item("book", 12.49, false, true),
+                new Item("music CD", 14.99, false, false),
+                new Item("chocolate bar", 0.85, false, true)
+            };
+            var expectedReceipt = "book: 12.49\nmusic CD: 16.49\nchocolate bar: 0.85\nSales Taxes: 1.50\nTotal: 29.83";
+            Assert.Equal(expectedReceipt, ReceiptGenerator.Generate(items));
+        }
     }
 }
