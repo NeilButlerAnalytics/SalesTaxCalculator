@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesTaxCalculator", "SalesTaxCalculator\SalesTaxCalculator.csproj", "{C3E4346D-249F-49DC-AC3C-AC8482244928}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesTaxCalculator", "SalesTaxCalculator\SalesTaxCalculator.csproj", "{C3E4346D-249F-49DC-AC3C-AC8482244928}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesTaxCalculator.Tests", "SalesTaxCalculator.Tests\SalesTaxCalculator.Tests.csproj", "{2411BC9C-3099-40A6-9AB5-72CFD51F25FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesTaxCalculator.Tests", "SalesTaxCalculator.Tests\SalesTaxCalculator.Tests.csproj", "{2411BC9C-3099-40A6-9AB5-72CFD51F25FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkout", "Checkout\Checkout.csproj", "{AC48234D-FB68-456F-9E58-2231B9CB412F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2411BC9C-3099-40A6-9AB5-72CFD51F25FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2411BC9C-3099-40A6-9AB5-72CFD51F25FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2411BC9C-3099-40A6-9AB5-72CFD51F25FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC48234D-FB68-456F-9E58-2231B9CB412F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC48234D-FB68-456F-9E58-2231B9CB412F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC48234D-FB68-456F-9E58-2231B9CB412F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC48234D-FB68-456F-9E58-2231B9CB412F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
