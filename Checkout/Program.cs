@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using SalesTaxApp;
+﻿using SalesTaxApp;
 using SalesTaxCalculator;
 
 namespace MyReceiptApp
@@ -10,98 +7,131 @@ namespace MyReceiptApp
     {
         static void Main(string[] args)
         {
-            // Input data
-            var inputItems1 = new List<string>
+            string filePath;
+            // Check if a file path is provided as a command-line argument
+            if (args.Length == 0)
             {
-                "1 book at 12.49",
-                "1 music CD at 14.99",
-                "1 chocolate bar at 0.85"
-            };
-
-            var inputItems2 = new List<string>
+                Console.WriteLine("Please provide the path to the CSV file");
+                filePath = Console.ReadLine();
+            }
+            else
             {
-                "1 Imported box of chocolates at 10.00",
-                "1 Imported bottle of perfume at 47.50",
-            };
-
-            var inputItems3 = new List<string>
-            {
-                "1 Imported bottle of perfume at 27.99",
-                "1 Bottle of perfume at 18.99",
-                "1 Packet of paracetamol at 9.75",
-                "1 Box of imported chocolates at 11.25"
-            };
-
-            var inputItems4 = new List<string>
-            {
-                "2 Imported bottle of perfume at 27.99",
-                "12 Bottle of perfume at 18.99",
-                "5 Packet of paracetamol at 9.75",
-                "4 Box of imported chocolates at 11.25",
-                "58 chocolate bar at 0.85",
-                "6 book at 12.49",
-                "4 music CD at 14.99"
-            };
-            string receipt = "";
-            // Parse input items and calculate receipt
-            if (inputItems1.Count != 0)
-            {
-                var items1 = ParseInputItems(inputItems1);
-                receipt = ReceiptGenerator.Generate(items1);
+                filePath = args[0];
             }
 
-            if (inputItems2.Count != 0)
+            // Read items from CSV if the file exists
+            List<string> inputItems;
+            if (File.Exists(filePath))
             {
-                var items2 = ParseInputItems(inputItems2);
-                receipt += "\n\n" + ReceiptGenerator.Generate(items2);
+                inputItems = ReadItemsFromCSV(filePath); // Read items from CSV
             }
-            if (inputItems3.Count != 0)
+            else
             {
-                var items3 = ParseInputItems(inputItems3);
-                receipt += "\n\n" + ReceiptGenerator.Generate(items3);
+                Console.WriteLine("CSV file not found!"); // Print error message if file not found
+                return;
             }
-            // Extra input to show code working with multiple items.
-            if (inputItems4.Count != 0)
+
+            string receipt = ""; // Initialize receipt string
+            string currentTitle = ""; // Store the current title
+
+            List<List<string>> allInputIterations = new List<List<string>>(); // Initialize list for all input iterations
+
+            // Loop through input items to separate different input iterations
+            foreach (var items in inputItems)
             {
-                var items4 = ParseInputItems(inputItems4);
-                receipt += "\n\n----------------------------\n\n" + ReceiptGenerator.Generate(items4);
+                // Check if the line is empty or not
+                if (string.IsNullOrWhiteSpace(items))
+                {
+                    currentTitle = ""; // Reset title on empty line
+                    continue;
+                }
+
+                // Check if the line contains "Input"
+                if (!items.Contains("Input"))
+                {
+                    // Add items to the current input iteration list
+                    allInputIterations[allInputIterations.Count - 1].Add(items);
+                }
+                else
+                {
+                    // "Input" detected, create a new input iteration list
+                    allInputIterations.Add(new List<string>());
+                    // Handle new input title or other initial processing if needed
+                    // currentTitle = items; // Example of handling the new input title
+                }
             }
+
+            // Process each input iteration separately
+            foreach (var iteration in allInputIterations)
+            {
+                // Parse items and generate receipt for this iteration
+                var parsedItems = ParseInputItems(iteration);
+                receipt += currentTitle + "\n" + ReceiptGenerator.Generate(parsedItems) + "\n\n";
+            }
+
             // Print receipt to screen
             Console.WriteLine(receipt);
             Console.ReadLine(); // Keep the console open until user intervention
         }
 
+        // Method to read items from CSV file
+        static List<string> ReadItemsFromCSV(string filePath)
+        {
+            var items = new List<string>();
+            using (var reader = new StreamReader(filePath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    items.Add(reader.ReadLine());
+                }
+            }
+            return items;
+        }
+
+        // Method to parse input items and generate list of Item objects
         static List<Item> ParseInputItems(List<string> inputItems)
         {
             var items = new List<Item>();
 
             foreach (var inputItem in inputItems)
             {
-                // Find the index of the first space
-                int spaceIndex = inputItem.IndexOf(' ');
+                if (!inputItem.Contains("Input"))
+                {
+                    // Find the index of the last occurrence of " at " to split the string
+                    int atIndex = inputItem.LastIndexOf(" at ");
 
-                // Extract the quantity substring
-                int quantity = int.Parse(inputItem.Substring(0, spaceIndex));
+                    // Ensure " at " is found and it's not the last character in the string
+                    if (atIndex >= 0 && atIndex < inputItem.Length - 1)
+                    {
+                        // Extract the quantity, item name, and price from the input string
+                        
+                        int firstSpaceIndex = inputItem.IndexOf(' ');// Extract the quantity from the beginning of the string up to the first space
+                        string quantityStr = inputItem.Substring(0, firstSpaceIndex).Trim();
+                        string itemName = (inputItem.Substring(quantityStr.Length + 1, atIndex - quantityStr.Length - 1).Trim()).ToLower();
+                        string priceStr = inputItem.Substring(atIndex + 4).Trim();
 
-                // Extract the item details substring
-                string itemDetails = (inputItem.Substring(spaceIndex + 1)).ToLower();
+                        // Parse quantity and price
+                        if (int.TryParse(quantityStr, out int quantity) && double.TryParse(priceStr, out double price))
+                        {
+                            // Determine if the item is imported or exempt from tax
+                            bool isImported = itemName.Contains("imported");
+                            bool isExempt = itemName.Contains("book") || itemName.Contains("chocolate") || itemName.Contains("paracetamol");
 
-                // Determine if the item is imported
-                bool isImported = itemDetails.Contains("imported");
-
-                // Determine if the item is exempt from tax
-                bool isExempt = itemDetails.Contains("book") || itemDetails.Contains("chocolate") || itemDetails.Contains("paracetamol");
-
-                // Find the index of "at" to separate the item name and price
-                int atIndex = itemDetails.LastIndexOf(" at ");
-                string itemName = itemDetails.Substring(0, atIndex).Replace("imported ", "").Trim();
-                double price = double.Parse(itemDetails.Substring(atIndex + 4));
-
-                // Calculate the total price for the current item
-                double totalPrice = price * quantity;
-
-                // Create an Item object and add it to the list
-                items.Add(new Item(itemName, totalPrice, isImported, isExempt, quantity));
+                            // Create Item object and add it to the list
+                            items.Add(new Item(itemName, price * quantity, isImported, isExempt, quantity));
+                        }
+                        else
+                        {
+                            // Handle parsing error
+                            Console.WriteLine($"Error parsing quantity or price in input item: {inputItem}");
+                        }
+                    }
+                    else
+                    {
+                        // Handle missing " at " separator
+                        Console.WriteLine($"Missing ' at ' separator in input item: {inputItem}");
+                    }
+                }
             }
 
             return items;
