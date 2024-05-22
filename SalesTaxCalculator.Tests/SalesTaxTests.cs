@@ -1,5 +1,6 @@
 using Xunit;
 using SalesTaxCalculator;
+using System.Diagnostics;
 
 namespace SalesTaxApp.Tests
 {
@@ -90,6 +91,28 @@ namespace SalesTaxApp.Tests
             };
             var expectedReceipt = "imported bottle of perfume: 32.19\nbottle of perfume: 20.89\npacket of headache pills: 9.75\nimported box of chocolates: 11.85\nSales Taxes: 6.70\nTotal: 74.68";
             Assert.Equal(expectedReceipt, ReceiptGenerator.Generate(items));
+        }
+
+        // Test to ensure exempt items do not create any tax
+        [Fact]
+        public void ExemptItemNoTax()
+        {
+            var exemptItem = new Item("Exempt Item", 10.0, false, true);
+
+            double tax = ReceiptGenerator.CalculateTax(exemptItem);
+
+            Assert.Equal(0.0, tax); // Asserting that no tax is calculated for exempt items
+        }
+
+        // Test to check tax is calculated correctly
+        [Fact]
+        public void ImportedItemCorrectTax()
+        {
+            var importedItem = new Item("Imported Item", 10.0, true, false);
+
+            double tax = ReceiptGenerator.CalculateTax(importedItem);
+
+            Assert.Equal(1.50, tax); // Asserting that the correct import duty tax is calculated for imported items not exempt from basic tax
         }
     }
 }
