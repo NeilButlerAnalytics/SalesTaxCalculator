@@ -31,6 +31,17 @@ namespace MyReceiptApp
                 "1 Packet of paracetamol at 9.75",
                 "1 Box of imported chocolates at 11.25"
             };
+
+            var inputItems4 = new List<string>
+            {
+                "2 Imported bottle of perfume at 27.99",
+                "12 Bottle of perfume at 18.99",
+                "5 Packet of paracetamol at 9.75",
+                "4 Box of imported chocolates at 11.25",
+                "58 chocolate bar at 0.85",
+                "6 book at 12.49",
+                "4 music CD at 14.99"
+            };
             string receipt = "";
             // Parse input items and calculate receipt
             if (inputItems1.Count != 0)
@@ -44,10 +55,16 @@ namespace MyReceiptApp
                 var items2 = ParseInputItems(inputItems2);
                 receipt += "\n\n" + ReceiptGenerator.Generate(items2);
             }
-            if (inputItems2.Count != 0)
+            if (inputItems3.Count != 0)
             {
                 var items3 = ParseInputItems(inputItems3);
                 receipt += "\n\n" + ReceiptGenerator.Generate(items3);
+            }
+            // Extra input to show code working with multiple items.
+            if (inputItems4.Count != 0)
+            {
+                var items4 = ParseInputItems(inputItems4);
+                receipt += "\n\n----------------------------\n\n" + ReceiptGenerator.Generate(items4);
             }
             // Print receipt to screen
             Console.WriteLine(receipt);
