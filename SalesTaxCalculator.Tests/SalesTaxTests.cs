@@ -54,7 +54,7 @@ namespace SalesTaxApp.Tests
         // Generate method created in Receipt.cs - this method creates a receipt as string based on itmes and price and total price after tax
         // This first test is based on the first required output in the specification
         [Fact]
-        public void test4_GenerateAReceipt()
+        public void test4_GenerateAReceipt_Output1()
         {
             var items = new List<Item>
             {
@@ -63,6 +63,32 @@ namespace SalesTaxApp.Tests
                 new Item("chocolate bar", 0.85, false, true)
             };
             var expectedReceipt = "book: 12.49\nmusic CD: 16.49\nchocolate bar: 0.85\nSales Taxes: 1.50\nTotal: 29.83";
+            Assert.Equal(expectedReceipt, ReceiptGenerator.Generate(items));
+        }
+        // Test based on second output of specification
+        [Fact]
+        public void test5_GenerateAReceipt_Output2()
+        {
+            var items = new List<Item>
+            {
+                new Item("imported box of chocolates", 10.00, true, true),
+                new Item("imported bottle of perfume", 47.50, true, false)
+            };
+            var expectedReceipt = "imported box of chocolates: 10.50\nimported bottle of perfume: 54.65\nSales Taxes: 7.65\nTotal: 65.15";
+            Assert.Equal(expectedReceipt, ReceiptGenerator.Generate(items));
+        }
+        // Test based on third output of specification
+        [Fact]
+        public void test6_GenerateAReceipt_Output3()
+        {
+            var items = new List<Item>
+            {
+                new Item("imported bottle of perfume", 27.99, true, false),
+                new Item("bottle of perfume", 18.99, false, false),
+                new Item("packet of headache pills", 9.75, false, true),
+                new Item("imported box of chocolates", 11.25, true, true)
+            };
+            var expectedReceipt = "imported bottle of perfume: 32.19\nbottle of perfume: 20.89\npacket of headache pills: 9.75\nimported box of chocolates: 11.85\nSales Taxes: 6.70\nTotal: 74.68";
             Assert.Equal(expectedReceipt, ReceiptGenerator.Generate(items));
         }
     }
